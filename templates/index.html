@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="shortcut icon" href="https://img.icons8.com/ios-filled/100/000000/laptop-play-video.png"/>
+        <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+        <title>Video Converter online</title>
+
+        <style>
+        .header {
+            left: 4%;
+            right: auto;
+            top: 8px;
+            position: absolute; 
+        }
+        .slogan {
+            left: 585px;
+            top: 20px;
+            position: absolute; 
+        }
+  
+        #register_box {
+            background: rgba(102, 102, 102, 0.5);
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            z-index:99999999;   
+        }     
+        #login_box {
+            background: rgba(102, 102, 102, 0.5);
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            z-index:99999999;   
+        }     
+        #okno {
+            width: 300px;
+            height: 200px;
+            text-align: center;
+            padding: 15px;
+            border: 3px solid #0000cc;
+            border-radius: 10px;
+            color: #0000cc;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            margin: auto;
+            background: #fff;
+        }
+        #register_box:target {display: block;}
+
+        .close {
+            display: inline-block;
+            border: 1px solid #0000cc;
+            color: #0000cc;
+            padding: 0 12px;
+            margin: 10px;
+            text-decoration: none;
+            background: #f2f2f2;
+            font-size: 14pt;
+            cursor:pointer;
+        }
+        #login_box:target {display: block;}
+
+        .close {
+            display: inline-block;
+            border: 1px solid #0000cc;
+            color: #0000cc;
+            padding: 0 12px;
+            margin: 10px;
+            text-decoration: none;
+            background: #f2f2f2;
+            font-size: 14pt;
+            cursor:pointer;
+        }
+        .close:hover {background: #e6e6ff;}
+
+        .create_account {
+            right: 2%;
+            left: auto;
+            position: absolute;
+            top: 19px;
+            cursor: pointer;
+            background: #F4FC03; border:3px #00B344  ridge; width: 80px; padding: 10px 10px 10px 15px;  margin:20px;
+            border-radius: 35px;
+            
+        }
+        .login_account {
+            right: 10%;
+            left: auto;
+            position: absolute;  
+            top: 19px;  
+            cursor: pointer;
+            background: #F4FC03; border:3px #00B344  ridge; width: 80px; padding: 10px 10px 10px 15px;  margin:20px;
+            border-radius: 35px;
+            
+        }
+
+        #button {
+            cursor: pointer; 
+        }
+        #makereg {
+            cursor: pointer; 
+        }
+        #makelog {
+            cursor: pointer; 
+        }
+        .information {
+            left: 150px;
+            top: 320px;
+            position: absolute;  
+            width: 800px;
+            min-width: 220px;
+            margin-bottom: 40px;
+            color: #4d4d4d;
+            line-height: 1.4;
+            font-size: 15px;
+            font-weight: 300;
+        }
+        .line {
+            background-image: linear-gradient(to right,#ff0800,transparent);
+            height: 2px;
+            background-position: 0 0;
+            background-repeat: no-repeat;
+            opacity: 50%;
+            margin-bottom: 15px;
+        }
+        .logo {
+            top: 30px ;
+            position: absolute;
+            
+        }
+        #sendfile {
+            margin: 150px 0 0 600px;
+        }
+        .logout {
+
+            right: 2%;
+            left: auto;
+            position: absolute;
+            top: 45px;
+        }
+
+
+        .button_adv {
+            text-decoration: none !important;
+            background-color: #ff0606 !important;
+            color: #ffffff !important;
+            border: 10px solid #006089 !important;
+            border-radius: 61px !important;
+            font-size: 66px !important;
+            padding: 11px 93px !important; 
+            transition: all 0.4s ease !important;
+            left: 450px;
+            top: 140px;              
+            position: absolute;
+        }
+        .button_adv:hover{
+            text-decoration: none !important; 
+            background-color: #ff0404 !important;
+            color: #ffffff !important;
+            border-color: #0dffff !important;
+        }   
+
+        .videotable {
+            position: absolute;
+            left: 150px;
+            top: 160px;
+            width: 400px;
+            border: 2px solid rgb(0, 0, 0);
+            padding: 3px;
+            text-align: left;
+        }
+                
+        </style>
+        <script>
+            var username = "{{ username }}";
+            $( document ).ready(function() {
+                if (username.length != 0){
+                    $("#registrform").hide();
+                    $("#converterform").show();
+                }
+                else {
+                    $("#registrform").show();
+                    $("#converterform").hide();
+                }
+
+            // Registration function 
+                $("#makereg").click(function(){
+                    username = $("#uname").val();
+                    password = $("#passwd").val();
+                    $.ajax({
+                        url: "/register",
+                        data: { 
+                            "username": username, 
+                            "password": password
+                        },
+                        cache: false,
+                        type: "POST",
+                        success: function(response) {
+                            alert(response ['status'] + " " + response['message'])
+                        },
+                        error: function(xhr) {
+                            alert("Error"+ + xhr )
+                        }
+                    });
+
+                });
+            //Send file
+            $ ("#sendfile").submit(function(evt){
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    url : '/convert',
+                    type : 'POST',
+                    data : formData,
+                    processData: false,  // tell jQuery not to process the data
+                    contentType: false,  // tell jQuery not to set contentType
+                    success : function(response,data) {
+                        console.log(data);
+                        alert(response ['status'] + " " + data);
+                    }
+                });
+                return false;
+
+            });
+            // Login function 
+            $("#makelog").click(function(){
+                    username = $("#uname1").val();
+                    password = $("#passwd1").val();
+                    $.ajax({
+                        url: "/login",
+                        data: { 
+                            "username": username, 
+                            "password": password
+                        },
+                        cache: false,
+                        type: "POST",
+                        success: function(response) {
+                            alert(response ['status'] + " " + response['message'])
+                            if (response ['status'] == "Congratulations!"){
+                                $("#userwelcome").html(username);
+                                $("#registrform").hide();
+                                $("#converterform").show();
+                                username = username;
+
+                            }
+                        },
+                        error: function(xhr) {
+                            alert("Error"+xhr)
+                        }
+                    });
+
+                });
+                // Status Table   
+                    setInterval(function(){
+                        if (username.length !=0) {   
+                        $.ajax({
+                            url: "/status",
+                            cache: false,
+                            type: "GET",
+                            success: function(resp) {
+                                data = "";
+                                console.log (resp);
+                                for (var i = 0; i < resp.data.length; i++){
+                                    data += "<tr>";
+                                    data += "<td>";
+                                    data += resp.data[i].input;
+                                    data += "</td>";
+                                    data += "<td>";
+                                    data += resp.data[i].status;
+                                    data += "</td>";
+                                    data += "<td>";
+                                    data += "<a target='_blank' href='/out/" + resp.data[i].output + "'>" + resp.data[i].output + "</a>";
+                                    data += "</td>";
+                                    data += "</tr>";
+                                }
+                                $("#allfiles").html (data);
+                            },
+                        }); 
+                    } 
+                    }, 5000);   
+            });
+        </script>
+
+
+    </head>
+
+    <body style="color:rgb(0, 0, 0); background-color:rgb(214, 239, 243)">
+
+     <!-- Header of site    -->
+        <a href="#" class="logo" >
+        <img src="https://neveragain.allstatics.com/2019/assets/icon/logo/uniconverter-square.svg" width="32" height="32"></a>
+
+        <div class="header" >
+        <p><h1>World Converter</h1></p>
+        </div>
+        <h2 class="slogan" > We'll improve all your files</h2>
+
+        <!-- Register form -->
+
+   <div id="register_box">
+      <div id="okno">
+        <label for="field_login"><b> Login:</b></label>
+        <p><input id="uname" type="text" name = "username" placeholder="Login" value "" /></p>
+        <label for="field_password" ><b>Password:</b></label>
+        <p> <input id="passwd" type="password" name = "password" placeholder="Password" value ""  /></p>
+        <input id="makereg" type="submit" value = "Register" /><br>
+        <a href="#" class="close">Close the window</a>
+      </div>
+    </div>
+
+    <!-- login form -->
+
+    <div id="login_box">
+      <div id="okno">
+        <label for="field_login"><b> Login:</b></label>
+        <p><input id="uname1" type="text" name = "username" placeholder="Login" value "" /></p>
+        <label for="field_password"><b>Password:</b></label>
+        <p> <input id="passwd1" type="password" name = "password" placeholder="Password" value "" /></p>
+        <input id="makelog" type="submit" value = "Login" /><br>
+        <a href="#" class="close">Close the window</a>
+      </div>
+    </div>
+
+    
+   <div id="registrform" >
+            <!-- Menu form -->
+
+            <a class = "create_account" href="#register_box">Create one!</a>
+            <a class = "login_account" href="#login_box">Sign In</a>
+         
+            <!-- Adv button  -->
+            
+           <a href="#register_box" class="button_adv" >Registration</a>
+
+    </div>
+    
+    <div id = "converterform" style="display: none" >
+
+            <!-- Convert form -->
+
+            <form id="sendfile" action="/convert" enctype="multipart/form-data" method="post">
+                <div>Choose start-time:</div>
+                <input type="" name="start_time" placeholder="Start time" />
+                <div>Choose video duration:</div>
+                <input type="text" name="duration" placeholder="duration">
+                <p><input type="file" name="user_video">
+                <input type="submit" value="Convert" ></p>
+            </form>    
+
+            <!-- Video list -->
+            <table class = "videotable">
+                <thead style="background: lightgreen">
+                    <tr>
+                        <td>Infiles</td>
+                        <td>Status</td>
+                        <td>Outfiles</td>
+                    </tr>
+                </thead>
+                <tbody id="allfiles" >
+                </tbody>
+            </table>
+
+
+            <!-- logout form -->
+
+            <div class="logout" > Logged in as <span id="userwelcome" > {{ username }}  </span>
+            <a href="/logout">Log out</a></div>
+    </div>
+
+     <!-- Information block -->
+     <div class="information" >
+            <table cellspacing="0" cellpadding="0" width= "1000" height="150" >
+                <tr><td>
+                    <div class="block"> <h3>Онлайн видео конвертер</h3> <div class="line"></div><p>Бесплатное веб-приложение для конвертации видео 
+                        из одного формата в другой, которое позволяет изменить формат, разрешение или размер ролика прямо в браузере.</p> </div>
+                    </td>
+                    <td>
+                    <div class="block"> <h3>Файлы до 4 ГБ</h3> <div class="line"></div> <p>Вы можете 
+                        загружать в приложение видео до 4 ГБ. При этом скорость загрузки зависит от скорости вашего соединения с интернетом.</p> </div> 
+                    </td>
+                    <td>
+                    <div class="block"> <h3>Высокая скорость конвертации</h3> <div class="line"></div> <p>Конвертация видео файлов происходит на мощных 
+                        серверах, это чаще всего быстрее, чем, если бы видео конвертировалось у вас на компьютере.</p> </div> 
+                    </td> </tr>
+
+                <tr><td>
+                    <div class="block"> <h3>Поддержка h265/HVEC</h3> <div class="line"></div> <p>Мы регулярно обновляем поддержку 
+                        кодеков нашими программами и вы всегда работаете с их новейшими версиями.</p> </div> 
+                    </td>
+                    <td>
+
+                        <div class="block"> <h3>Гарантия безопасности</h3> <div class="line"></div> <p>Доступ к вашим файлам есть только 
+                            у вас, а когда вы закончите работу с приложением, они будут автоматически удалены с наших серверов.</p> </div> 
+                       
+                    </td>
+                    <td>
+
+                    <div class="block"> <h3>Более 300 форматов</h3> <div class="line"></div> <p>На данный момент, приложение 
+                        распознает более 300 аудио и видео форматов, и это число постоянно увеличивается.</p> </div> 
+                </td> </tr>
+
+                <tr><td>
+
+                    <div class="block"> <h3>Без ограничений</h3> <div class="line"></div> <p>В нашем онлайн конвертере, 
+                        в отличии от других сервисов, нет ограничений на количество файлов. Конвертируйте столько, сколько захотите.</p> </div> 
+                    </td>
+                    <td>
+ 
+                   
+                    </td>
+                    <td>
+
+                    <div class="block"> <h3>Бесплатный конвертер</h3> <div class="line"></div> <p>Вам не нужно ничего платить, 
+                        ведь все функции приложения доступны совершенно бесплатно и без регистрации.</p> </div> </div> 
+                    </td></tr>   
+        </table>
+
+     </div>
+    </body>
+    <footer>
+    <p style = "opacity: .1; top: 100px">Работу выполнил Беликов Андрей N4162 </p>
+    </footer>
+
+</html>
